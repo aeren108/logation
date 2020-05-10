@@ -1,9 +1,0 @@
-aeren\logation\commands\LogCommand.class
-aeren\logation\db\Database.class
-aeren\logation\Utils.class
-aeren\logation\models\User.class
-aeren\logation\commands\LogationsCommand.class
-aeren\logation\commands\DeathlogCommand.class
-aeren\logation\EventListener.class
-aeren\logation\LogationMain.class
-aeren\logation\models\Logation.class

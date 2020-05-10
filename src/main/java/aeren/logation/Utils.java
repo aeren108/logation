@@ -1,6 +1,7 @@
 package aeren.logation;
 
 import aeren.logation.models.Logation;
+import aeren.logation.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,35 @@ public class Utils {
       deaths.add(death);
 
     return deaths;
+  }
+
+  public static Logation getLogationByLabel(User user, String label) {
+    Logation log = null;
+
+    for (Logation l : getLogations(user.getLocations())) {
+      if (l.getLabel().equalsIgnoreCase(label))
+        log = l;
+    }
+
+    return log;
+  }
+
+  public static void deleteLogation(User user, Logation l) {
+    List<Logation> logs = getLogations(user.getLocations());
+    StringBuilder raw = new StringBuilder();
+
+    for (Logation log : logs) {
+      if (log.getLabel().equals(l.getLabel()))
+        continue;
+
+      raw.append(convertLogationToRaw(log));
+    }
+
+    user.setLocations(raw.toString());
+  }
+
+  private static String convertLogationToRaw(Logation l) {
+    return l.getLocation() + "?" + l.getLabel() + "/";
   }
 
 }

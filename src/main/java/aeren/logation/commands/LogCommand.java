@@ -1,7 +1,9 @@
 package aeren.logation.commands;
 
 import aeren.logation.LogationMain;
+import aeren.logation.Utils;
 import aeren.logation.db.Database;
+import aeren.logation.models.Logation;
 import aeren.logation.models.User;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,7 +23,7 @@ public class LogCommand implements CommandExecutor {
   public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
     if (sender instanceof Player) {
       Player player = (Player) sender;
-      User user = LogationMain.users.get(player.getDisplayName());
+      User user = LogationMain.USERS.get(player.getDisplayName());
 
       if (user == null) {
         player.sendMessage(ChatColor.RED + "Something went wrong. Try reconnecting to server");
@@ -33,14 +35,28 @@ public class LogCommand implements CommandExecutor {
         return false;
       }
 
-      String label = args[0];
-      Location loc = player.getLocation();
-      String logation = df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ()) + "?" + label + "/";
+      String task = args[0];
 
-      user.setLocations(logation + user.getLocations());
-      db.updateUser(user);
+      if (task.equalsIgnoreCase("list")) {
+        for (Logation l : Utils.getLogations(user.getLocations())) {
+          player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + l.getLabel() + ": " +  ChatColor.RESET + "" + ChatColor.GOLD + l.getLocation());
+        }
+      } else {
+        Location loc = player.getLocation();
 
-      player.sendMessage(ChatColor.AQUA + "(" + df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ()) + ") saved as " + ChatColor.GOLD + label);
+        String label = args[0];
+        String logation = df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ()) + "?" + label + "/";
+
+        if (Utils.getLogationByLabel(user, label) != null) {
+          player.sendMessage(ChatColor.RED + "A logation named " + ChatColor.DARK_PURPLE + label + ChatColor.RED + " already exists");
+          return true;
+        }
+
+        user.setLocations(logation + user.getLocations());
+        db.updateUser(user);
+
+        player.sendMessage(ChatColor.AQUA + "(" + df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ()) + ") saved as " + ChatColor.GOLD + label);
+      }
 
       return true;
     }

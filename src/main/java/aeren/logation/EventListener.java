@@ -1,9 +1,7 @@
 package aeren.logation;
 
 import aeren.logation.db.Database;
-import aeren.logation.models.Logation;
 import aeren.logation.models.User;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,24 +14,20 @@ import java.text.DecimalFormat;
 
 public class EventListener implements Listener {
 
-  private Database db;
+  private Database db = Database.getInstance();
   private DecimalFormat df = new DecimalFormat("0.00");
-
-  public EventListener() {
-    db = Database.getInstance();
-  }
 
   @EventHandler
   public void onPlayerDeath(PlayerDeathEvent event) {
     Player player = event.getEntity();
-    User user = db.getUserByName(player.getDisplayName());
+    User user = LogationMain.USERS.get(player.getDisplayName());
 
     if (user == null) {
       user = new User(player.getDisplayName(), "", "");
       db.createUser(user);
 
-      LogationMain.users.remove(user.getName());
-      LogationMain.users.put(user.getName(), user);
+      LogationMain.USERS.remove(user.getName());
+      LogationMain.USERS.put(user.getName(), user);
     }
 
     Location loc = player.getLocation();
@@ -41,7 +35,7 @@ public class EventListener implements Listener {
     user.setDeaths(deathPoint + "/" + user.getDeaths());
 
     db.updateUser(user);
-    player.sendMessage(ChatColor.AQUA + "Your last death location: " + ChatColor.GOLD + deathPoint);
+    player.sendMessage(ChatColor.LIGHT_PURPLE + "Last Deathpoint: " + ChatColor.GOLD + deathPoint);
   }
 
   @EventHandler
@@ -55,8 +49,8 @@ public class EventListener implements Listener {
       db.createUser(user);
     }
 
-    LogationMain.users.remove(user.getName());
-    LogationMain.users.put(user.getName(), user);
+    LogationMain.USERS.remove(user.getName());
+    LogationMain.USERS.put(user.getName(), user);
   }
 
 }
