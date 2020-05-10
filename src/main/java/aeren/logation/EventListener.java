@@ -32,7 +32,7 @@ public class EventListener implements Listener {
 
     Location loc = player.getLocation();
     String deathPoint = df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ());
-    user.setDeaths(deathPoint + "/" + user.getDeaths());
+    Utils.addDeathpoint(user, deathPoint);
 
     db.updateUser(user);
     player.sendMessage(ChatColor.LIGHT_PURPLE + "Last Deathpoint: " + ChatColor.GOLD + deathPoint);

@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Utils {
 
+  public static final int MAX_DEATHPOINTS = 5;
+
   public static List<Logation> getLogations(String raw) {
     //Structure of raw logations = "166.89 65.75 -895?[label1]/4856 -67 745?[label2]/..."
     List<Logation> logations = new ArrayList();
@@ -64,6 +66,22 @@ public class Utils {
 
   private static String convertLogationToRaw(Logation l) {
     return l.getLocation() + "?" + l.getLabel() + "/";
+  }
+
+  public static void addDeathpoint(User user, String deathPoint) {
+    List<String> deaths = getDeaths(user.getDeaths());
+    StringBuilder raw = new StringBuilder();
+
+    if (deaths.size() == MAX_DEATHPOINTS)
+      deaths.remove(deaths.size() - 1);
+
+    deaths.add(0, deathPoint);
+
+    for (String dp : deaths) {
+      raw.append(dp + "/");
+    }
+
+    user.setDeaths(raw.toString());
   }
 
 }
