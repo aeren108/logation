@@ -1,0 +1,18 @@
+name: Logation
+description: Location logger plugin
+author: AerenPozitif
+main: aeren.logation.LogationMain
+version: 1.0
+
+commands:
+  logations:
+    description: Shows locations you logged
+    usage: /<command>
+
+  log:
+    description: Logs a location with a name
+    usage: /<command> [location-name]
+
+  deathlog:
+    description: Shows your death history and locations
+    usage: /<command>
