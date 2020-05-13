@@ -2,7 +2,8 @@ package aeren.logation.commands;
 
 import aeren.logation.LogationMain;
 import aeren.logation.Utils;
-import aeren.logation.db.Database;
+import aeren.logation.db.UserDao;
+import aeren.logation.db.UserDaoImpl;
 import aeren.logation.models.Logation;
 import aeren.logation.models.User;
 import org.bukkit.ChatColor;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class DelCommand implements CommandExecutor {
 
-  private Database db = Database.getInstance();
+  private UserDao dao = new UserDaoImpl();
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -38,7 +39,7 @@ public class DelCommand implements CommandExecutor {
       }
 
       Utils.deleteLogation(user, log);
-      db.updateUser(user);
+      dao.updateUser(user);
 
       player.sendMessage(ChatColor.DARK_PURPLE + "Logation deleted: " + ChatColor.GOLD + log.getLabel());
 

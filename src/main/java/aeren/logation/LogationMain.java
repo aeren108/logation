@@ -4,8 +4,10 @@ import aeren.logation.commands.DeathlogCommand;
 import aeren.logation.commands.DelCommand;
 import aeren.logation.commands.FindCommand;
 import aeren.logation.commands.LogCommand;
-import aeren.logation.db.Database;
+import aeren.logation.db.UserDao;
+import aeren.logation.db.UserDaoImpl;
 import aeren.logation.models.User;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,14 +22,12 @@ import java.util.Map;
 public class LogationMain extends JavaPlugin {
 
   public static final Map<String, User> USERS = new HashMap();
-
-  private Database db;
+  private UserDao dao = new UserDaoImpl();
 
   @Override
   public void onEnable() {
     super.onEnable();
 
-    db = Database.getInstance();
     loadUsers();
 
     this.getCommand("log").setExecutor(new LogCommand());
@@ -39,12 +39,14 @@ public class LogationMain extends JavaPlugin {
   }
 
   private void loadUsers() {
+    ((UserDaoImpl) dao).createUserTable();
+
     for (Player player : Bukkit.getOnlinePlayers()) {
-      User user = db.getUserByName(player.getDisplayName());
+      User user = dao.getUserByName(player.getDisplayName());
 
       if (user == null) {
         user = new User(player.getDisplayName(), "", "");
-        db.createUser(user);
+        dao.createUser(user);
       }
 
       USERS.put(user.getName(), user);
@@ -68,7 +70,5 @@ public class LogationMain extends JavaPlugin {
   @Override
   public void onDisable() {
     super.onDisable();
-
-    db.close();
   }
 }

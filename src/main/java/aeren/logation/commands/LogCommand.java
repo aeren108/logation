@@ -2,7 +2,8 @@ package aeren.logation.commands;
 
 import aeren.logation.LogationMain;
 import aeren.logation.Utils;
-import aeren.logation.db.Database;
+import aeren.logation.db.UserDao;
+import aeren.logation.db.UserDaoImpl;
 import aeren.logation.models.Logation;
 import aeren.logation.models.User;
 import org.bukkit.ChatColor;
@@ -16,7 +17,7 @@ import java.text.DecimalFormat;
 
 public class LogCommand implements CommandExecutor {
 
-  private Database db = Database.getInstance();
+  private UserDao dao = new UserDaoImpl();
   private DecimalFormat df = new DecimalFormat("0.00");
 
   @Override
@@ -53,7 +54,7 @@ public class LogCommand implements CommandExecutor {
         }
 
         user.setLocations(logation + user.getLocations());
-        db.updateUser(user);
+        dao.updateUser(user);
 
         player.sendMessage(ChatColor.AQUA + "(" + df.format(loc.getX()) + " " + df.format(loc.getY()) + " " + df.format(loc.getZ()) + ") saved as " + ChatColor.GOLD + label);
       }

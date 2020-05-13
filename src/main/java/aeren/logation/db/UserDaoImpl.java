@@ -1,64 +1,39 @@
 package aeren.logation.db;
 
-
-import aeren.logation.LogationMain;
 import aeren.logation.models.User;
+
 import java.sql.*;
 
-public class Database {
-  private static Database instance = null;
+public class UserDaoImpl implements UserDao {
 
-  private Connection con;
-  private boolean initialized = false;
-
-  public static final String LOGS_TABLE = "logs";
   public static final String NAME_COL = "name";
   public static final String LOCATIONS_COL = "locations";
   public static final String DEATHS_COL = "deaths";
 
-  private Database() {
-    initDb();
-  }
-
-  public static Database getInstance() {
-    if (instance == null)
-      instance = new Database();
-
-    return instance;
-  }
-
-  private void initDb() {
+  @Override
+  public void createUserTable() {
+    Connection conn = ConnectionFactory.getConnection();
     try {
-      con = this.connect("logation.db");
-
-      Statement s = con.createStatement();
-      String tableSql = "CREATE TABLE IF NOT EXISTS " + LOGS_TABLE + "(name TEXT NOT NULL UNIQUE," +
-        "locations TEXT NOT NULL," +
-        "deaths TEXT NOT NULL)";
+      Statement s = conn.createStatement();
+      String tableSql = "CREATE TABLE IF NOT EXISTS logs (name TEXT NOT NULL UNIQUE," +
+                                                          "locations TEXT NOT NULL," +
+                                                          "deaths TEXT NOT NULL)";
 
       s.executeUpdate(tableSql);
-      s.close();
     } catch (SQLException e) {
-      return;
+      e.printStackTrace();
+    } finally {
+      close(conn);
     }
-
-    initialized = true;
   }
 
-  private Connection connect(String url) throws SQLException {
-    Connection con = null;
-    con = DriverManager.getConnection("jdbc:sqlite:" + url);
-
-    return con;
-  }
-
+  @Override
   public User getUserByName(String username) {
-    if (!initialized)
-      return null;
+    Connection conn = ConnectionFactory.getConnection();
 
     try {
       String query = "SELECT * FROM logs WHERE name = ?";
-      PreparedStatement ps = con.prepareStatement(query);
+      PreparedStatement ps = conn.prepareStatement(query);
 
       ps.setString(1, username);
 
@@ -74,18 +49,20 @@ public class Database {
 
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      close(conn);
     }
 
     return null;
   }
 
+  @Override
   public boolean createUser(User user) {
-    if (!initialized)
-      return false;
+    Connection conn = ConnectionFactory.getConnection();
 
     try {
       String sql = "INSERT INTO logs(name, locations, deaths) VALUES(?, ?, ?)";
-      PreparedStatement ps = con.prepareStatement(sql);
+      PreparedStatement ps = conn.prepareStatement(sql);
 
       ps.setString(1, user.getName());
       ps.setString(2, user.getLocations());
@@ -95,18 +72,20 @@ public class Database {
       return true;
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      close(conn);
     }
 
     return false;
   }
 
+  @Override
   public boolean updateUser(User user) {
-    if (!initialized)
-      return false;
+    Connection conn = ConnectionFactory.getConnection();
 
     try {
       String sql = "UPDATE logs SET locations = ?, deaths = ? WHERE name = ?";
-      PreparedStatement ps = con.prepareStatement(sql);
+      PreparedStatement ps = conn.prepareStatement(sql);
 
       ps.setString(1, user.getLocations());
       ps.setString(2, user.getDeaths());
@@ -117,18 +96,20 @@ public class Database {
       return true;
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      close(conn);
     }
 
     return false;
   }
 
+  @Override
   public boolean deleteUser(User user) {
-    if (!initialized)
-      return false;
+    Connection conn = ConnectionFactory.getConnection();
 
     try {
       String sql = "DELETE FROM logs WHERE name = ?";
-      PreparedStatement ps = con.prepareStatement(sql);
+      PreparedStatement ps = conn.prepareStatement(sql);
 
       ps.setString(1, user.getName());
 
@@ -137,17 +118,20 @@ public class Database {
       return true;
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      close(conn);
     }
 
     return false;
   }
 
-  public void close() {
-    try {
-      con.close();
-    } catch (SQLException e) {
-      e.printStackTrace();
+  private void close(Connection conn) {
+    if (conn != null) {
+      try {
+        conn.close();
+      } catch (SQLException throwables) {
+        throwables.printStackTrace();
+      }
     }
   }
-
 }
