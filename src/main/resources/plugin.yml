@@ -20,3 +20,7 @@ commands:
   del:
     description: Deletes logation
     usage: /<command> [logation-name]
+
+  tplog:
+    description: Teleport to a logation
+    usage: /<command> [logation-name]

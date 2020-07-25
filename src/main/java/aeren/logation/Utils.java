@@ -2,6 +2,8 @@ package aeren.logation;
 
 import aeren.logation.models.Logation;
 import aeren.logation.models.User;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,17 @@ public class Utils {
     }
 
     user.setLocations(raw.toString());
+  }
+
+  public static Location getLocationFromLogation(World world, Logation l) {
+    String locText = l.getLocation().replace(",", ".");
+    String[] coords = locText.split(" ");
+
+    double x = Double.parseDouble(coords[0].trim());
+    double y = Double.parseDouble(coords[1].trim());
+    double z = Double.parseDouble(coords[2].trim());
+
+    return new Location(world, x, y, z);
   }
 
   private static String convertLogationToRaw(Logation l) {

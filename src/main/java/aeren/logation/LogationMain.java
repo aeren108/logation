@@ -1,9 +1,6 @@
 package aeren.logation;
 
-import aeren.logation.commands.DeathlogCommand;
-import aeren.logation.commands.DelCommand;
-import aeren.logation.commands.FindCommand;
-import aeren.logation.commands.LogCommand;
+import aeren.logation.commands.*;
 import aeren.logation.db.UserDao;
 import aeren.logation.db.UserDaoImpl;
 import aeren.logation.models.User;
@@ -35,6 +32,7 @@ public class LogationMain extends JavaPlugin {
     this.getCommand("deathlog").setExecutor(new DeathlogCommand());
     this.getCommand("find").setExecutor(new FindCommand());
     this.getCommand("del").setExecutor(new DelCommand());
+    this.getCommand("tplog").setExecutor(new TplogCommand());
     this.getServer().getPluginManager().registerEvents(new EventListener(), this);
   }
 

@@ -21,9 +21,7 @@ public class FindCommand implements CommandExecutor {
       if (user == null) {
         player.sendMessage(ChatColor.RED + "Something went wrong. Try reconnecting to server");
         return false;
-      }
-
-      if (args.length != 1) {
+      } else if (args.length != 1) {
         player.sendMessage(ChatColor.RED + "Wrong usage");
         return false;
       }
